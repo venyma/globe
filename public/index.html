@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Globe - the friendly web messenger</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<nav>
+  <div class="nav-title"><h1>Globe</h1></div>
+  <div class="nav-links"><a href="#">About</a></div>
+</nav>
+
+<h2>Send</h2>
+<form id="sendForm">
+  <input type="text" id="passwordSend" placeholder="Password" required><br>
+  <textarea id="messageSend" placeholder="Your message" required></textarea><br>
+  <button type="submit">Send</button>
+</form>
+
+<hr>
+
+<h2>Get</h2>
+<form id="getForm">
+  <input type="text" id="passwordGet" placeholder="Password" required><br>
+  <button type="submit">Get</button>
+</form>
+
+<p id="messageResult"></p>
+
+<script>
+document.getElementById('sendForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const password = document.getElementById('passwordSend').value;
+  const message = document.getElementById('messageSend').value;
+
+  fetch('/send', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ password, message })
+  })
+  .then(res => res.json())
+  .then(data => alert(data.msg || data.error))
+  .catch(err => console.error(err));
+});
+
+document.getElementById('getForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const password = document.getElementById('passwordGet').value;
+
+  fetch('/get', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ password })
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('messageResult').textContent = data.message || data.error;
+  })
+  .catch(err => console.error(err));
+});
+</script>
+<p>Hosted by the Venyma Network.</p>
+</body>
+</html>
